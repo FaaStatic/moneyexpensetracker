@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
@@ -38,11 +39,75 @@ class _EditScreenState extends State<EditScreen> {
 
   void showDate() async {
     if (Platform.isIOS) {
+      showCupertinoModalPopup(
+          context: context,
+          useRootNavigator: true,
+          builder: ((context) {
+            final widthScreen = MediaQuery.of(context).size.width;
+            final heightScreen = MediaQuery.of(context).size.height;
+            return Container(
+                padding: const EdgeInsets.all(25),
+                width: widthScreen,
+                constraints:
+                    BoxConstraints(minHeight: heightScreen * 0.3, maxHeight: heightScreen * 0.45),
+                decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.all(Radius.circular(10)),
+                    color: HexColor("#1B4242")),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+                  const SizedBox(
+                    height: 35,
+                    child: Text(
+                      "Select Date Expenses",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          decorationThickness: 0,
+                          color: Colors.black,
+                          decoration: TextDecoration.none,
+                          fontFamily: "Rubik",
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16),
+                    ),
+                  ),
+                  const Gap(16),
+                  Expanded(
+                      child: SizedBox(
+                    child: CupertinoDatePicker(
+                      onDateTimeChanged: (value) {
+                        setState(() {
+                          timeInput = DateFormat("dd MMMM yyyy, hh:mm:ss").format(value);
+                        });
+                      },
+                      dateOrder: DatePickerDateOrder.dmy,
+                      initialDateTime: DateTime.now(),
+                      minimumDate: DateTime(1945),
+                      maximumDate: DateTime(2099),
+                      mode: CupertinoDatePickerMode.date,
+                    ),
+                  )),
+                  const Gap(8),
+                  ElevatedButton(
+                      onPressed: () {
+                        context.pop();
+                      },
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: HexColor("#092635"), fixedSize: Size(widthScreen, 52)),
+                      child: const Text(
+                        "Save changes",
+                        style: TextStyle(
+                            fontSize: 16,
+                            decoration: TextDecoration.none,
+                            fontFamily: "Rubik",
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700),
+                      )),
+                  const Gap(8),
+                ]));
+          }));
     } else {
       await showDatePicker(
         context: context,
-        firstDate: DateTime(2000),
-        lastDate: DateTime(2100),
+        firstDate: DateTime(1945),
+        lastDate: DateTime(2 - 99),
         initialDate: DateTime.now(),
       ).then((value) {
         if (value != null) {
